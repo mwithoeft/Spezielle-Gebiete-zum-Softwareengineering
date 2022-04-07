@@ -13,7 +13,6 @@
   - Typescript
 - Kommunikation
   - Websockets oder GraphQL
-- 
 
 
 
@@ -28,4 +27,6 @@ Websocket Ideen:
 GraphQL Ideen:
 
 - Projekte mit vielen Rest-APIs verbinden, sodass Anfragen leicht angepasst werden können
-- 
+
+
+
