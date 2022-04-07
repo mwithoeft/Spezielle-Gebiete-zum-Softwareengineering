@@ -20,6 +20,7 @@ Websocket Ideen:
 
 - Multiplayer Games / Quiz / Memory / Battleships etc.
   - Online mit Websockets, eigene Spiele erstellen
+  - Vs Polling
 - Standortbasierte Apps
 
 
@@ -27,6 +28,6 @@ Websocket Ideen:
 GraphQL Ideen:
 
 - Projekte mit vielen Rest-APIs verbinden, sodass Anfragen leicht angepasst werden können
+  - VS Rest Schnittstellen
 
-
-
+- Semantic Versioning integrieren
