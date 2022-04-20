@@ -1,11 +1,26 @@
 import express from 'express';
-const app = express();
-const port = 3000;
+import { Server, Socket } from "socket.io";
+import { createServer } from "http";
+import helmet from "helmet";
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+
+const port = 3000;
+const app = express();
+app.use(helmet());
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+  },
 });
 
-app.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`);
+
+io.on("connection", (socket: Socket) => {
+  console.log("a user connected");
+});
+
+
+httpServer.listen(port, () => {
+  console.log(`started on port: ${port}`);
 });

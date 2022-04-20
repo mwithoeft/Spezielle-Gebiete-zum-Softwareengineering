@@ -64,6 +64,34 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "websocket": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.websocket.ts"
+                }
+              ]
+            },
+            "webtransport": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.webtransport.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -76,9 +104,15 @@
             },
             "development": {
               "browserTarget": "communication-protocols:build:development"
+            },
+            "websocket": {
+              "browserTarget": "communication-protocols:build:websocket"
+            },
+            "webtransport": {
+              "browserTarget": "communication-protocols:build:webtransport"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "websocket"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
