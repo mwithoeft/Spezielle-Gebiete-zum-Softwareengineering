@@ -1,26 +1,16 @@
-import express from 'express';
-import { Server, Socket } from "socket.io";
-import { createServer } from "http";
-import helmet from "helmet";
+import 'dotenv/config';
 
+import { ICommunicationServer } from "./communicationServer.interface";
+import { WebsocketServer } from './websocketServer';
+import { WebtransportServer } from './webtransportServer';
 
-const port = 3000;
-const app = express();
-app.use(helmet());
-const httpServer = createServer(app);
+let communicationServer: ICommunicationServer;
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-  },
-});
+if (process.env.PROTOCOL === "websocket") {
+  communicationServer = new WebsocketServer();
+} else {
+  communicationServer = new WebtransportServer();
+}
 
+communicationServer.start();
 
-io.on("connection", (socket: Socket) => {
-  console.log("a user connected");
-});
-
-
-httpServer.listen(port, () => {
-  console.log(`started on port: ${port}`);
-});
