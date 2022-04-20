@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
+import { Socket } from 'ngx-socket-io';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketService {
 
-  constructor() {
+  constructor(private socket: Socket) {
     console.log("Using WebSocketService");
+
+    this.socket.connect();
   }
 }

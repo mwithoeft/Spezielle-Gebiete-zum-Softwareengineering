@@ -25,6 +25,10 @@ export class WebsocketServer implements ICommunicationServer {
 
         io.on("connection", (socket: Socket) => {
             console.log("a user connected");
+
+            socket.on("disconnect", () => {
+                console.log("a user disconnected");
+              });
         });
 
 
