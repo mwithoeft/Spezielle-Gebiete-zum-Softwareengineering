@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "communication-protocols": {
+    "frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/communication-protocols",
+            "outputPath": "dist/frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -100,16 +100,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "communication-protocols:build:production"
+              "browserTarget": "frontend:build:production"
             },
             "development": {
-              "browserTarget": "communication-protocols:build:development"
+              "browserTarget": "frontend:build:development"
             },
             "websocket": {
-              "browserTarget": "communication-protocols:build:websocket"
+              "browserTarget": "frontend:build:websocket"
             },
             "webtransport": {
-              "browserTarget": "communication-protocols:build:webtransport"
+              "browserTarget": "frontend:build:webtransport"
             }
           },
           "defaultConfiguration": "websocket"
@@ -117,7 +117,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "communication-protocols:build"
+            "browserTarget": "frontend:build"
           }
         },
         "test": {
@@ -141,5 +141,5 @@
       }
     }
   },
-  "defaultProject": "communication-protocols"
+  "defaultProject": "frontend"
 }
