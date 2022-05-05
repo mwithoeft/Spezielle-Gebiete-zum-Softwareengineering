@@ -13,39 +13,26 @@ BIND_ADDRESS = 'webtransport.withoeft.nz'
 BIND_PORT = 4433
 
 
-# CounterHandler implements a really simple protocol:
-#   - For every incoming bidirectional stream, it counts bytes it receives on
-#     that stream until the stream is closed, and then replies with that byte
-#     count on the same stream.
-#   - For every incoming unidirectional stream, it counts bytes it receives on
-#     that stream until the stream is closed, and then replies with that byte
-#     count on a new unidirectional stream.
-#   - For every incoming datagram, it sends a datagram with the length of
-#     datagram that was just received.
-class CounterHandler:
+class ConnectionHandler:
 
     def __init__(self, session_id, http: H3Connection) -> None:
-        self._session_id = session_id
-        self._http = http
-        self._counters = defaultdict(int)
+            self._session_id = session_id
+            self._http = http
+            self._counters = defaultdict(int)
 
     def h3_event_received(self, event: H3Event) -> None:
-        if isinstance(event, DatagramReceived):
-            payload = str(event.data).encode('ascii')
-            self._http.send_datagram(self._session_id, payload)
-
         if isinstance(event, WebTransportStreamDataReceived):
             self._counters[event.stream_id] += len(event.data)
-            if event.stream_ended:
-                if stream_is_unidirectional(event.stream_id):
-                    response_id = self._http.create_webtransport_stream(
-                        self._session_id, is_unidirectional=True)
-                else:
+            if not stream_is_unidirectional(event.stream_id): #stream needs to be bidirectional
+                if event.stream_ended:
                     response_id = event.stream_id
-                payload = str(self._counters[event.stream_id]).encode('ascii')
-                self._http._quic.send_stream_data(
-                    response_id, payload, end_stream=True)
-                self.stream_closed(event.stream_id)
+                    payload = str(self._counters[event.stream_id]).encode('ascii')
+                    self._http._quic.send_stream_data(
+                        response_id, payload, end_stream=True)
+                    self.stream_closed(event.stream_id)
+                else:
+                    self._http._quic.send_stream_data(
+                        event.stream_id, event.data, end_stream=False)
 
     def stream_closed(self, stream_id: int) -> None:
         try:
@@ -54,15 +41,12 @@ class CounterHandler:
             pass
 
 
-# WebTransportProtocol handles the beginning of a WebTransport connection: it
-# responses to an extended CONNECT method request, and routes the transport
-# events to a relevant handler (in this example, CounterHandler).
 class WebTransportProtocol(QuicConnectionProtocol):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._http: Optional[H3Connection] = None
-        self._handler: Optional[CounterHandler] = None
+        self._handler: Optional[ConnectionHandler] = None
 
     def quic_event_received(self, event: QuicEvent) -> None:
         if isinstance(event, ProtocolNegotiated):
@@ -100,9 +84,9 @@ class WebTransportProtocol(QuicConnectionProtocol):
             # `:authority` and `:path` must be provided.
             self._send_response(stream_id, 400, end_stream=True)
             return
-        if path == b"/counter":
+        if path == b"/":
             assert(self._handler is None)
-            self._handler = CounterHandler(stream_id, self._http)
+            self._handler = ConnectionHandler(stream_id, self._http)
             self._send_response(stream_id, 200)
         else:
             self._send_response(stream_id, 404, end_stream=True)

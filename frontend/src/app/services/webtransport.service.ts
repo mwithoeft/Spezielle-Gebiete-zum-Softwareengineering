@@ -7,24 +7,70 @@ declare var WebTransport: any;
 })
 export class WebtransportService {
 
-  readonly url = 'https://localhost:4433';
+  readonly url = 'https://webtransport.withoeft.nz:4433/';
+
+  transport: any;
 
   constructor() {
     console.log("Using WebTransportService");
-    this.init();
+    this.connect();
   }
 
-  async init() {
-    const transport = new WebTransport(this.url);
+  async connect() {
+    try {
+      this.transport = new WebTransport(this.url);
+      console.log('Initiating connection...');
+    } catch (e) {
+      console.error('Failed to create connection object. ' + e, 'error');
+      return;
+    }
 
+    try {
+      await this.transport.ready;
+      console.log('Connection ready.');
+    } catch (e) {
+      console.error('Connection failed. ' + e, 'error');
+      return;
+    }
 
-    transport.closed.then(() => {
-      console.log(`The HTTP/3 connection to ${this.url} closed gracefully.`);
-    }).catch((error: any) => {
-      console.error(`The HTTP/3 connection to ${this.url} closed due to ${error}.`);
-    });
+    this.transport.closed
+      .then(() => {
+        console.log('Connection closed normally.');
+      })
+      .catch(() => {
+        console.error('Connection closed abruptly.', 'error');
+      });
 
-    await transport.ready;
+      this.send('Hello from the client');
+  }
+
+  async send(message: string) {
+    let encoder = new TextEncoder();
+    let data = encoder.encode(message);
+    let stream = await this.transport.createBidirectionalStream();
+    this.readFromIncomingStream(stream);
+
+    let writer = stream.writable.getWriter();
+    await writer.write(data);
+    //await writer.close();
+  }
+
+  async readFromIncomingStream(stream: any) {
+    let decoder = new TextDecoder();
+    let reader = stream.readable.getReader();
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          console.log('Stream #' + ' closed');
+          return;
+        }
+        let data = decoder.decode(value);
+        console.log('Received data on stream #' + ': ' + data);
+      }
+    } catch (e) {
+      console.error('Error while reading from stream #' + ': ' + e, 'error');
+    }
   }
 
 }
