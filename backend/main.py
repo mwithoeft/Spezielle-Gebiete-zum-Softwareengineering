@@ -1,5 +1,6 @@
 import argparse
 from webtransport import run_webtransport_server
+from websocket import run_websocket_server
 
 if __name__ == '__main__':
 
@@ -10,4 +11,4 @@ if __name__ == '__main__':
     if args.protocol == 'webtransport':
         run_webtransport_server()
     elif args.protocol == 'websocket':
-        print('Not implemented yet.')
+        run_websocket_server()

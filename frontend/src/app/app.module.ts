@@ -9,7 +9,7 @@ import { CommunicationService } from './services/communication.service';
 import { WebsocketService } from './services/websocket.service';
 import { WebtransportService } from './services/webtransport.service';
 
-const config: SocketIoConfig =  { url: 'http://localhost:3000', options: {} };
+const config: SocketIoConfig =  { url: 'http://webtransport.withoeft.nz:4444', options: {} };
 
 @NgModule({
   declarations: [

@@ -10,5 +10,19 @@ export class WebsocketService {
     console.log("Using WebSocketService");
 
     this.socket.connect();
+    this.listenToMessage();
+    this.sendMessage("Hello from the client");
   }
+
+
+  public sendMessage(message: string) {
+    this.socket.emit('message', message);
+  }
+
+  private listenToMessage() {
+    this.socket.on('message', (message: string) => {
+      console.log("Received message via websocket: " + message);
+    });
+  }
+
 }
