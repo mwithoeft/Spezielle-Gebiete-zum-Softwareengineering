@@ -9,6 +9,9 @@ from aioquic.quic.configuration import QuicConfiguration
 from aioquic.quic.connection import stream_is_unidirectional
 from aioquic.quic.events import ProtocolNegotiated, StreamReset, QuicEvent
 
+from data import Data
+import json
+
 BIND_ADDRESS = 'webtransport.withoeft.nz'
 BIND_PORT = 4433
 
@@ -31,14 +34,23 @@ class ConnectionHandler:
                         response_id, payload, end_stream=True)
                     self.stream_closed(event.stream_id)
                 else:
+                    returnData = self.handleRequest(event.data)
                     self._http._quic.send_stream_data(
-                        event.stream_id, event.data, end_stream=False)
+                        event.stream_id, returnData, end_stream=False)
 
     def stream_closed(self, stream_id: int) -> None:
         try:
             del self._counters[stream_id]
         except KeyError:
             pass
+
+    def handleRequest(self, data):
+        if (data == b'download-files-list'):
+            jsonString = json.dumps(Data.get_file_names())
+            return bytearray(jsonString, 'utf-8')
+        else:
+            return b'Empty response'
+            
 
 
 class WebTransportProtocol(QuicConnectionProtocol):

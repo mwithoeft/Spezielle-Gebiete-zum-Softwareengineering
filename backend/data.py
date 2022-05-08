@@ -1,9 +1,10 @@
 import os
 
+class Data:
 
-def get_file_names():
-    """
-    Returns a list of file names in the files directory.
-    """
+    @staticmethod
+    def get_file_names():
+        files = [f for f in os.listdir("files") if not f.startswith('.')]
+        return files
 
 
