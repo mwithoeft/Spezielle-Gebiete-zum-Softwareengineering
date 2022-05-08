@@ -3,12 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start:websocket": "ng serve --configuration=websocket",
-    "start:webtransport": "ng serve --configuration=webtransport",
-    "build:websocket": "ng build --configuration=websocket",
-    "build:webtransport": "ng build --configuration=webtransport",
-    "watch:websocket": "ng build --watch --configuration=websocket",
-    "watch:webtransport": "ng build --watch --configuration=webtransport",
+    "start:websocket": "ng serve --configuration=websocket --port=4201",
+    "start:webtransport": "ng serve --configuration=webtransport --port=4200",
+    "build:websocket": "ng build --configuration=websocket --output-path=dist/websocket",
+    "build:webtransport": "ng build --configuration=webtransport --output-path=dist/webtransport",
     "test": "ng test"
   },
   "private": true,
