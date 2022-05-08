@@ -95,7 +95,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const config = { url: 'http://webtransport.withoeft.nz:4444', options: {} };
+const config = { url: 'http://websocket.withoeft.nz:4444', options: {} };
 class AppModule {
 }
 AppModule.ɵfac = function AppModule_Factory(t) { return new (t || AppModule)(); };
@@ -215,6 +215,7 @@ class WebsocketService {
         this.socket.connect();
         this.listenToMessage();
         this.sendMessage("Hello from the client");
+        this.requestFiles();
     }
     sendMessage(message) {
         this.socket.emit('message', message);
@@ -222,6 +223,12 @@ class WebsocketService {
     listenToMessage() {
         this.socket.on('message', (message) => {
             console.log("Received message via websocket: " + message);
+        });
+    }
+    requestFiles() {
+        this.socket.emit('download-files-list');
+        this.socket.on('download-files-list', (message) => {
+            console.log(message);
         });
     }
 }
@@ -278,7 +285,7 @@ class WebtransportService {
         console.error('Connection closed abruptly.', 'error');
       });
 
-      _this.send('Hello from the client');
+      _this.send('download-files-list');
     })();
   }
 
@@ -293,7 +300,8 @@ class WebtransportService {
       _this2.readFromIncomingStream(stream);
 
       let writer = stream.writable.getWriter();
-      yield writer.write(data); //await writer.close();
+      yield writer.write(data);
+      yield writer.close();
     })();
   }
 
