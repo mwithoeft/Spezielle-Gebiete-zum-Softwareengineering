@@ -12,6 +12,7 @@ export class WebsocketService {
     this.socket.connect();
     this.listenToMessage();
     this.sendMessage("Hello from the client");
+    this.requestFiles();
   }
 
 
@@ -22,6 +23,13 @@ export class WebsocketService {
   private listenToMessage() {
     this.socket.on('message', (message: string) => {
       console.log("Received message via websocket: " + message);
+    });
+  }
+
+  public requestFiles() {
+    this.socket.emit('download-files-list');
+    this.socket.on('download-files-list', (message: string[]) => {
+      console.log(message);
     });
   }
 

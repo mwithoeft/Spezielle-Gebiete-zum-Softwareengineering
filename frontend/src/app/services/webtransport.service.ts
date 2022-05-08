@@ -41,7 +41,7 @@ export class WebtransportService {
         console.error('Connection closed abruptly.', 'error');
       });
 
-      this.send('Hello from the client');
+      this.send('download-files-list');
   }
 
   async send(message: string) {
@@ -52,7 +52,7 @@ export class WebtransportService {
 
     let writer = stream.writable.getWriter();
     await writer.write(data);
-    //await writer.close();
+    await writer.close();
   }
 
   async readFromIncomingStream(stream: any) {

@@ -11,7 +11,7 @@ import { WebsocketService } from './services/websocket.service';
 import { WebtransportService } from './services/webtransport.service';
 import { LargeFilesComponent } from './large-files/large-files.component';
 
-const config: SocketIoConfig = { url: 'http://webtransport.withoeft.nz:4444', options: {} };
+const config: SocketIoConfig = { url: 'http://websocket.withoeft.nz:4444', options: {} };
 
 @NgModule({
   declarations: [
