@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+import os
 
-@dataclass
-class BigFile:
-    pass
 
-@dataclass
-class SmallFile:
-    pass
+def get_file_names():
+    """
+    Returns a list of file names in the files directory.
+    """
+
+
