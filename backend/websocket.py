@@ -35,5 +35,9 @@ async def message_event(sid, data):
     await sio.emit('message', "Danke für die Nachricht")
 
 @sio.on('download-files-list')
-async def download_files_event(sid, data):
+async def download_files_event(sid):
     await sio.emit('download-files-list', Data.get_file_names())
+
+@sio.on('download-file')
+async def download_file_event(sid, filename):
+    await sio.emit('download-file', (filename, Data.get_file(filename)))
