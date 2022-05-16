@@ -8,12 +8,19 @@ import { CommunicationService } from '../services/communication.service';
 })
 export class LargeFilesComponent implements OnInit {
 
-  files: any[] = [];
+  files: string[] = [];
 
   constructor(private communicationsService: CommunicationService) { }
 
   ngOnInit(): void {
-    
+    this.communicationsService.downloadFiles.subscribe(files => {
+      this.files = files;
+      this.files.sort();
+    });
+  }
+
+  downloadFile(filename: string) {
+    this.communicationsService.downloadFile(filename);
   }
 
 }

@@ -1,6 +1,2 @@
-<h1>Große Dateien zum Download:</h1>
-
-<ul>
-    <li *ngFor="let file of files">
-    </li>
-</ul>
+<h1>Große Dateien zum Download (Doppelklick):</h1>
+<p-listbox [options]="files" (onDblClick)="downloadFile($event['value'])"></p-listbox>

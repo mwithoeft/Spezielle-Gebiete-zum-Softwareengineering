@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import {ListboxModule} from 'primeng/listbox';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,7 +24,8 @@ const config: SocketIoConfig = { url: 'http://websocket.withoeft.nz:4444', optio
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
-    SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config),
+    ListboxModule
   ],
   providers: [CommunicationService, WebsocketService, WebtransportService],
   bootstrap: [AppComponent]

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 declare var WebTransport: any;
 
@@ -11,9 +12,15 @@ export class WebtransportService {
 
   transport: any;
 
-  constructor() {
+  downloadFiles! : BehaviorSubject<string[]>;
+
+  constructor() {}
+
+  init(downloadFiles: BehaviorSubject<string[]>) {
     console.log("Using WebTransportService");
     this.connect();
+
+    this.downloadFiles = downloadFiles;
   }
 
   async connect() {
@@ -72,5 +79,13 @@ export class WebtransportService {
       console.error('Error while reading from stream #' + ': ' + e, 'error');
     }
   }
+
+  public requestAvailableFiles(downloadFiles: BehaviorSubject<string[]>) {
+
+  }
+
+  public downloadFile(filename: string) {
+  }
+
 
 }
