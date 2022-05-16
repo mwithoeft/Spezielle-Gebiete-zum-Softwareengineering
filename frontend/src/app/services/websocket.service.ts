@@ -11,6 +11,9 @@ export class WebsocketService {
 
   downloadFiles! : BehaviorSubject<string[]>;
 
+  testDownloadSpeed = true;
+  downloadCounter = 0;
+
   init(downloadFiles: BehaviorSubject<string[]>) {
     console.log("Using WebSocketService");
 
@@ -42,6 +45,11 @@ export class WebsocketService {
       a.download = filename;
       a.click();
       console.timeEnd("downloadFile");
+      
+      if (this.testDownloadSpeed && this.downloadCounter < 100) {
+        this.downloadCounter++;
+        this.downloadFile(filename);
+      }
     });
   }
 
