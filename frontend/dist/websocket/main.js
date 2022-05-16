@@ -76,6 +76,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/platform-browser */ 318);
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/platform-browser/animations */ 3598);
 /* harmony import */ var ngx_socket_io__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ngx-socket-io */ 4935);
+/* harmony import */ var primeng_listbox__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! primeng/listbox */ 3803);
 /* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app-routing.module */ 158);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app.component */ 5041);
 /* harmony import */ var _services_communication_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services/communication.service */ 9729);
@@ -83,6 +84,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_webtransport_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./services/webtransport.service */ 2016);
 /* harmony import */ var _large_files_large_files_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./large-files/large-files.component */ 3489);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 3184);
+
 
 
 
@@ -105,13 +107,14 @@ AppModule.ɵinj = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵ
             _app_routing_module__WEBPACK_IMPORTED_MODULE_0__.AppRoutingModule,
             _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_8__.BrowserAnimationsModule,
             _angular_forms__WEBPACK_IMPORTED_MODULE_9__.FormsModule,
-            ngx_socket_io__WEBPACK_IMPORTED_MODULE_10__.SocketIoModule.forRoot(config)
+            ngx_socket_io__WEBPACK_IMPORTED_MODULE_10__.SocketIoModule.forRoot(config),
+            primeng_listbox__WEBPACK_IMPORTED_MODULE_11__.ListboxModule
         ]] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_1__.AppComponent,
         _large_files_large_files_component__WEBPACK_IMPORTED_MODULE_5__.LargeFilesComponent], imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_7__.BrowserModule,
         _app_routing_module__WEBPACK_IMPORTED_MODULE_0__.AppRoutingModule,
         _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_8__.BrowserAnimationsModule,
-        _angular_forms__WEBPACK_IMPORTED_MODULE_9__.FormsModule, ngx_socket_io__WEBPACK_IMPORTED_MODULE_10__.SocketIoModule] }); })();
+        _angular_forms__WEBPACK_IMPORTED_MODULE_9__.FormsModule, ngx_socket_io__WEBPACK_IMPORTED_MODULE_10__.SocketIoModule, primeng_listbox__WEBPACK_IMPORTED_MODULE_11__.ListboxModule] }); })();
 
 
 /***/ }),
@@ -128,33 +131,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 3184);
 /* harmony import */ var _services_communication_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/communication.service */ 9729);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ 6362);
+/* harmony import */ var primeng_listbox__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! primeng/listbox */ 3803);
 
 
 
-function LargeFilesComponent_li_3_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "li");
-} }
 class LargeFilesComponent {
     constructor(communicationsService) {
         this.communicationsService = communicationsService;
         this.files = [];
     }
     ngOnInit() {
+        this.communicationsService.downloadFiles.subscribe(files => {
+            this.files = files;
+            this.files.sort();
+        });
+    }
+    downloadFile(filename) {
+        this.communicationsService.downloadFile(filename);
     }
 }
 LargeFilesComponent.ɵfac = function LargeFilesComponent_Factory(t) { return new (t || LargeFilesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_communication_service__WEBPACK_IMPORTED_MODULE_0__.CommunicationService)); };
-LargeFilesComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: LargeFilesComponent, selectors: [["app-large-files"]], decls: 4, vars: 1, consts: [[4, "ngFor", "ngForOf"]], template: function LargeFilesComponent_Template(rf, ctx) { if (rf & 1) {
+LargeFilesComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: LargeFilesComponent, selectors: [["app-large-files"]], decls: 3, vars: 1, consts: [[3, "options", "onDblClick"]], template: function LargeFilesComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "h1");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "Gro\u00DFe Dateien zum Download:");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "Gro\u00DFe Dateien zum Download (Doppelklick):");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "ul");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, LargeFilesComponent_li_3_Template, 1, 0, "li", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "p-listbox", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("onDblClick", function LargeFilesComponent_Template_p_listbox_onDblClick_2_listener($event) { return ctx.downloadFile($event["value"]); });
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx.files);
-    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_2__.NgForOf], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJsYXJnZS1maWxlcy5jb21wb25lbnQubGVzcyJ9 */"] });
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("options", ctx.files);
+    } }, directives: [primeng_listbox__WEBPACK_IMPORTED_MODULE_2__.Listbox], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJsYXJnZS1maWxlcy5jb21wb25lbnQubGVzcyJ9 */"] });
 
 
 /***/ }),
@@ -169,10 +176,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CommunicationService": () => (/* binding */ CommunicationService)
 /* harmony export */ });
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 6317);
 /* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/environments/environment */ 2340);
 /* harmony import */ var _websocket_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./websocket.service */ 8223);
 /* harmony import */ var _webtransport_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./webtransport.service */ 2016);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 3184);
+
 
 
 
@@ -180,16 +189,22 @@ __webpack_require__.r(__webpack_exports__);
 class CommunicationService {
     constructor(injector) {
         this.injector = injector;
+        this.downloadFiles = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject([]);
         if (src_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.websocket) {
             this.protocolService = this.injector.get(_websocket_service__WEBPACK_IMPORTED_MODULE_1__.WebsocketService);
         }
         else {
             this.protocolService = this.injector.get(_webtransport_service__WEBPACK_IMPORTED_MODULE_2__.WebtransportService);
         }
+        this.protocolService.init(this.downloadFiles);
+        this.protocolService.requestAvailableFiles(this.downloadFiles);
+    }
+    downloadFile(filename) {
+        this.protocolService.downloadFile(filename);
     }
 }
-CommunicationService.ɵfac = function CommunicationService_Factory(t) { return new (t || CommunicationService)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__.Injector)); };
-CommunicationService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjectable"]({ token: CommunicationService, factory: CommunicationService.ɵfac, providedIn: 'root' });
+CommunicationService.ɵfac = function CommunicationService_Factory(t) { return new (t || CommunicationService)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__.Injector)); };
+CommunicationService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjectable"]({ token: CommunicationService, factory: CommunicationService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),
@@ -211,25 +226,45 @@ __webpack_require__.r(__webpack_exports__);
 class WebsocketService {
     constructor(socket) {
         this.socket = socket;
+        this.testDownloadSpeed = false;
+        this.downloadCounter = 0;
+    }
+    init(downloadFiles) {
         console.log("Using WebSocketService");
+        this.downloadFiles = downloadFiles;
         this.socket.connect();
-        this.listenToMessage();
-        this.sendMessage("Hello from the client");
-        this.requestFiles();
+        this.activateListeners();
     }
     sendMessage(message) {
         this.socket.emit('message', message);
     }
-    listenToMessage() {
+    activateListeners() {
         this.socket.on('message', (message) => {
             console.log("Received message via websocket: " + message);
         });
-    }
-    requestFiles() {
-        this.socket.emit('download-files-list');
         this.socket.on('download-files-list', (message) => {
-            console.log(message);
+            this.downloadFiles.next(message);
         });
+        this.socket.on('download-file', (filename, file) => {
+            let blob = new Blob([file], { type: 'application/octet-stream' });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            console.timeEnd("downloadFile");
+            if (this.testDownloadSpeed && this.downloadCounter < 100) {
+                this.downloadCounter++;
+                this.downloadFile(filename);
+            }
+        });
+    }
+    requestAvailableFiles() {
+        this.socket.emit('download-files-list');
+    }
+    downloadFile(filename) {
+        console.time("downloadFile");
+        this.socket.emit('download-file', filename);
     }
 }
 WebsocketService.ɵfac = function WebsocketService_Factory(t) { return new (t || WebsocketService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](ngx_socket_io__WEBPACK_IMPORTED_MODULE_1__.Socket)); };
@@ -255,8 +290,12 @@ __webpack_require__.r(__webpack_exports__);
 class WebtransportService {
   constructor() {
     this.url = 'https://webtransport.withoeft.nz:4433/';
+  }
+
+  init(downloadFiles) {
     console.log("Using WebTransportService");
     this.connect();
+    this.downloadFiles = downloadFiles;
   }
 
   connect() {
@@ -330,6 +369,10 @@ class WebtransportService {
       }
     })();
   }
+
+  requestAvailableFiles(downloadFiles) {}
+
+  downloadFile(filename) {}
 
 }
 

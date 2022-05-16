@@ -11,7 +11,7 @@ export class WebsocketService {
 
   downloadFiles! : BehaviorSubject<string[]>;
 
-  testDownloadSpeed = true;
+  testDownloadSpeed = false;
   downloadCounter = 0;
 
   init(downloadFiles: BehaviorSubject<string[]>) {
