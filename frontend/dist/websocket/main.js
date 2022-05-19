@@ -197,7 +197,7 @@ class CommunicationService {
             this.protocolService = this.injector.get(_webtransport_service__WEBPACK_IMPORTED_MODULE_2__.WebtransportService);
         }
         this.protocolService.init(this.downloadFiles);
-        this.protocolService.requestAvailableFiles(this.downloadFiles);
+        this.protocolService.requestAvailableFiles();
     }
     downloadFile(filename) {
         this.protocolService.downloadFile(filename);
@@ -290,6 +290,7 @@ __webpack_require__.r(__webpack_exports__);
 class WebtransportService {
   constructor() {
     this.url = 'https://webtransport.withoeft.nz:4433/';
+    this.fileName = "";
   }
 
   init(downloadFiles) {
@@ -323,12 +324,10 @@ class WebtransportService {
       }).catch(() => {
         console.error('Connection closed abruptly.', 'error');
       });
-
-      _this.send('download-files-list');
     })();
   }
 
-  send(message) {
+  send(message, type) {
     var _this2 = this;
 
     return (0,G_Studium_Spezielle_Gebiete_zum_Softwareengineering_frontend_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -336,7 +335,17 @@ class WebtransportService {
       let data = encoder.encode(message);
       let stream = yield _this2.transport.createBidirectionalStream();
 
-      _this2.readFromIncomingStream(stream);
+      switch (type) {
+        case "string":
+          _this2.readFromIncomingStream(stream);
+
+          break;
+
+        case "binary":
+          _this2.readFromIncomingBinaryStream(stream);
+
+          break;
+      }
 
       let writer = stream.writable.getWriter();
       yield writer.write(data);
@@ -345,6 +354,8 @@ class WebtransportService {
   }
 
   readFromIncomingStream(stream) {
+    var _this3 = this;
+
     return (0,G_Studium_Spezielle_Gebiete_zum_Softwareengineering_frontend_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let decoder = new TextDecoder();
       let reader = stream.readable.getReader();
@@ -362,6 +373,12 @@ class WebtransportService {
           }
 
           let data = decoder.decode(value);
+          let dataArray = data.split('$');
+
+          if (dataArray[0] === 'download-files-list') {
+            _this3.downloadFiles.next(JSON.parse(dataArray[1]));
+          }
+
           console.log('Received data on stream #' + ': ' + data);
         }
       } catch (e) {
@@ -370,9 +387,63 @@ class WebtransportService {
     })();
   }
 
-  requestAvailableFiles(downloadFiles) {}
+  readFromIncomingBinaryStream(stream) {
+    var _this4 = this;
 
-  downloadFile(filename) {}
+    return (0,G_Studium_Spezielle_Gebiete_zum_Softwareengineering_frontend_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let reader = stream.readable.getReader();
+      let data = new Uint8Array();
+
+      try {
+        while (true) {
+          const {
+            value,
+            done
+          } = yield reader.read();
+
+          if (done) {
+            //console.log('Stream #' + ' closed');
+            let blob = new Blob([data], {
+              type: 'application/octet-stream'
+            });
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = _this4.fileName;
+            a.click();
+            console.timeEnd("downloadFile");
+            return;
+          }
+
+          data = new Uint8Array([...data, ...value]);
+        }
+      } catch (e) {
+        console.error('Error while reading from stream #' + ': ' + e, 'error');
+      }
+    })();
+  }
+
+  requestAvailableFiles() {
+    var _this5 = this;
+
+    return (0,G_Studium_Spezielle_Gebiete_zum_Softwareengineering_frontend_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      yield _this5.transport.ready;
+
+      _this5.send('download-files-list', 'string');
+    })();
+  }
+
+  downloadFile(filename) {
+    var _this6 = this;
+
+    return (0,G_Studium_Spezielle_Gebiete_zum_Softwareengineering_frontend_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      yield _this6.transport.ready;
+      console.time("downloadFile");
+      _this6.fileName = filename;
+
+      _this6.send('download-file' + '$' + filename, 'binary');
+    })();
+  }
 
 }
 
