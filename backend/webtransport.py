@@ -22,8 +22,10 @@ class ConnectionHandler:
             self._session_id = session_id
             self._http = http
             self._counters = defaultdict(int)
+            self._http
 
     def h3_event_received(self, event: H3Event) -> None:
+        ##increase bandwidth
         if isinstance(event, WebTransportStreamDataReceived):
             self._counters[event.stream_id] += len(event.data)
             if not stream_is_unidirectional(event.stream_id): #stream needs to be bidirectional
@@ -34,9 +36,11 @@ class ConnectionHandler:
                         response_id, payload, end_stream=True)
                     self.stream_closed(event.stream_id)
                 else:
-                    returnData = self.handleRequest(event.data)
-                    self._http._quic.send_stream_data(
-                        event.stream_id, returnData, end_stream=False)
+                    for chunk in self.handleRequest(event.data):
+                        self._http._quic.send_stream_data(
+                        event.stream_id, chunk, end_stream=False)
+                    
+                    
 
     def stream_closed(self, stream_id: int) -> None:
         try:
@@ -46,10 +50,14 @@ class ConnectionHandler:
 
     def handleRequest(self, data):
         if (data == b'download-files-list'):
-            jsonString = json.dumps(Data.get_file_names())
-            return bytearray(jsonString, 'utf-8')
+            jsonString = str(data.decode("UTF-8")) + "$" + json.dumps(Data.get_file_names())
+            yield bytearray(jsonString, 'utf-8')
+        elif (data.decode("UTF-8").split("$")[0] == "download-file"):
+            filename = data.decode("UTF-8").split("$")[1]
+            for chunk in Data.read_file_chunks(filename):
+                yield chunk
         else:
-            return b'Empty response'
+            yield b'Empty response'
             
 
 
@@ -120,7 +128,9 @@ def run_webtransport_server():
     configuration = QuicConfiguration(
         alpn_protocols=H3_ALPN,
         is_client=False,
-        max_datagram_frame_size=65536,
+        max_datagram_frame_size=6553600,
+        max_stream_data=104857600,
+        max_data=104857600
     )
     configuration.load_cert_chain("/etc/letsencrypt/live/webtransport.withoeft.nz/cert.pem",
                                   "/etc/letsencrypt/live/webtransport.withoeft.nz/privkey.pem")
