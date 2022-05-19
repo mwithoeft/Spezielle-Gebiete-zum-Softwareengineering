@@ -23,7 +23,7 @@ export class CommunicationService {
     }
     this.protocolService.init(this.downloadFiles);
 
-    this.protocolService.requestAvailableFiles(this.downloadFiles);
+    this.protocolService.requestAvailableFiles();
   }
 
   downloadFile(filename: string) {

@@ -55,8 +55,6 @@ export class WebsocketService {
 
   public requestAvailableFiles() {
     this.socket.emit('download-files-list');
-    
-
   }
 
   public downloadFile(filename: string) {

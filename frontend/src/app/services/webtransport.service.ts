@@ -9,6 +9,7 @@ declare var WebTransport: any;
 export class WebtransportService {
 
   readonly url = 'https://webtransport.withoeft.nz:4433/';
+  fileName = "";
 
   transport: any;
 
@@ -47,15 +48,22 @@ export class WebtransportService {
       .catch(() => {
         console.error('Connection closed abruptly.', 'error');
       });
-
-      this.send('download-files-list');
   }
 
-  async send(message: string) {
+  async send(message: string, type: "string" | "binary") {
     let encoder = new TextEncoder();
     let data = encoder.encode(message);
     let stream = await this.transport.createBidirectionalStream();
-    this.readFromIncomingStream(stream);
+    
+    switch (type) {
+      case "string":
+        this.readFromIncomingStream(stream);
+        break;
+      case ("binary"):
+        this.readFromIncomingBinaryStream(stream);
+        break;
+    }
+    
 
     let writer = stream.writable.getWriter();
     await writer.write(data);
@@ -73,6 +81,13 @@ export class WebtransportService {
           return;
         }
         let data = decoder.decode(value);
+
+        let dataArray = data.split('$');
+
+        if (dataArray[0] === 'download-files-list') {
+          this.downloadFiles.next(JSON.parse(dataArray[1]));
+        }
+
         console.log('Received data on stream #' + ': ' + data);
       }
     } catch (e) {
@@ -80,11 +95,47 @@ export class WebtransportService {
     }
   }
 
-  public requestAvailableFiles(downloadFiles: BehaviorSubject<string[]>) {
+  async readFromIncomingBinaryStream(stream: any) {
+    let reader = stream.readable.getReader();
 
+    let data = new Uint8Array();
+
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          //console.log('Stream #' + ' closed');
+
+          let blob = new Blob([data], { type: 'application/octet-stream' });
+          let url = window.URL.createObjectURL(blob);
+          let a = document.createElement('a');
+          a.href = url;
+          a.download = this.fileName;
+          a.click();
+
+          console.timeEnd("downloadFile");
+          return;
+        }
+        data = new Uint8Array([...data, ...value])
+        
+      }
+    } catch (e) {
+      console.error('Error while reading from stream #' + ': ' + e, 'error');
+    }
   }
 
-  public downloadFile(filename: string) {
+  public async requestAvailableFiles() {
+    await this.transport.ready;
+    this.send('download-files-list', 'string');
+  }
+
+  public async downloadFile(filename: string) {
+    await this.transport.ready;
+
+      console.time("downloadFile");    
+      this.fileName = filename;
+
+      this.send('download-file'+'$'+filename, 'binary');
   }
 
 
