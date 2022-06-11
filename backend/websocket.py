@@ -34,6 +34,11 @@ async def message_event(sid, data):
     print('custom event triggered with data: ' + str(data))
     await sio.emit('message', "Danke für die Nachricht")
 
+@sio.on('ping')
+async def ping_event(sid, data):
+    print('custom event triggered with data: ' + str(data))
+    await sio.emit('ping', "Danke für die Nachricht")
+
 @sio.on('download-files-list')
 async def download_files_event(sid):
     await sio.emit('download-files-list', Data.get_file_names())
