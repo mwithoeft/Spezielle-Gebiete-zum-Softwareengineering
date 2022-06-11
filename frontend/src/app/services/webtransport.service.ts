@@ -10,8 +10,12 @@ export class WebtransportService {
 
   readonly url = 'https://webtransport.withoeft.nz:4433/';
   fileName = "";
-
   transport: any;
+
+  counterActive = false;
+  start = 0;
+  counter = 0;
+  max = 1000;
 
   downloadFiles! : BehaviorSubject<string[]>;
 
@@ -88,6 +92,13 @@ export class WebtransportService {
           this.downloadFiles.next(JSON.parse(dataArray[1]));
         }
 
+        if (this.counterActive && this.counter >= this.max-1) {
+          let end = Date.now()
+          let persec = this.counter / (end - this.start) * 1000
+          console.log('Took %s ms %s/s', end - this.start, persec.toFixed(2))
+          return;
+        }
+
         console.log('Received data on stream #' + ': ' + data);
       }
     } catch (e) {
@@ -136,6 +147,17 @@ export class WebtransportService {
       this.fileName = filename;
 
       this.send('download-file'+'$'+filename, 'binary');
+  }
+
+  public async startPingTest(i:number, max=this.max) {
+    await this.transport.ready;
+    this.start = Date.now();
+    this.counterActive = true;
+
+    for (let i = 0; i < max; i++) {
+      this.send('message', 'string');
+      this.counter = i;
+    }
   }
 
 

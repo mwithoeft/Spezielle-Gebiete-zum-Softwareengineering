@@ -62,4 +62,21 @@ export class WebsocketService {
     this.socket.emit('download-file', filename);
   }
 
+  public startPingTest(i:number, max=10000) {
+    let start = Date.now()
+    let that = this;
+    this.socket.on('ping', function(data: string){
+      console.log('Got a single with:', data)
+      if (i >= max) {
+        let end = Date.now()
+        let persec = i / (end - start) * 1000
+        console.log('Took %s ms %s/s', end - start, persec.toFixed(2))
+        that.socket.removeListener('ping')
+        return;
+      }
+      that.socket.emit('ping', i+=1);
+    })
+    this.socket.emit('ping', i)
+  }
+
 }

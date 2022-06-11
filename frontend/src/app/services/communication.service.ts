@@ -30,6 +30,11 @@ export class CommunicationService {
     this.protocolService.downloadFile(filename);
   }
 
+  startPingTest() {
+    console.log("Starting ping test");
+    this.protocolService.startPingTest(0);
+  }
+
   
 
 }
