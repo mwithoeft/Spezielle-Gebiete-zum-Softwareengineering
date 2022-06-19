@@ -35,6 +35,9 @@ export class CommunicationService {
     this.protocolService.startPingTest(0);
   }
 
-  
+  startMultiClientTest() {
+    console.log("Starting multi client test");
+    this.protocolService.startMultiClientTest(300);
+  }
 
 }

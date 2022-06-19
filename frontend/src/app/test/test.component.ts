@@ -17,4 +17,8 @@ export class TestComponent implements OnInit {
     this.communicationService.startPingTest();
   }
 
+  startMultiClientTest() {
+    this.communicationService.startMultiClientTest();
+  }
+
 }

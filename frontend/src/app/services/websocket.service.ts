@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+import { Socket, SocketIoConfig } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -62,7 +62,7 @@ export class WebsocketService {
     this.socket.emit('download-file', filename);
   }
 
-  public startPingTest(i:number, max=10000) {
+  public startPingTest(i:number, max=1) {
     let start = Date.now()
     let that = this;
     this.socket.on('ping', function(data: string){
@@ -77,6 +77,32 @@ export class WebsocketService {
       that.socket.emit('ping', i+=1);
     })
     this.socket.emit('ping', i)
+  }
+
+  public startMultiClientTest(connections: number) {
+    const config: SocketIoConfig = { url: 'http://websocket.withoeft.nz:4444', options: {} };
+    
+    console.time("multiClientTest");
+    let counter = 0;
+
+    for (let i = 0; i < connections; i++) {
+      let socket = new Socket(config);
+      socket.emit('multi-client-test', "2_1MB.bin");
+
+      socket.on('multi-client-test', (filename: string, file: Uint8Array) => {
+        let blob = new Blob([file], { type: 'application/octet-stream' });
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        counter++;
+        if (counter >= connections) {
+          console.timeEnd("multiClientTest");
+        }
+      });
+    }
+
   }
 
 }

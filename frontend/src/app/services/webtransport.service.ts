@@ -12,7 +12,7 @@ export class WebtransportService {
   fileName = "";
   transport: any;
 
-  counterActive = false;
+  counterActive = true;
   start = 0;
   counter = 0;
   max = 1000;
@@ -123,8 +123,12 @@ export class WebtransportService {
           a.href = url;
           a.download = this.fileName;
           a.click();
-
-          console.timeEnd("downloadFile");
+          this.counter++;
+          
+          if (this.counterActive && this.counter >= this.max) {
+            console.timeEnd("downloadFile");
+          }
+          else if (!this.counterActive) console.timeEnd("downloadFile");
           return;
         }
         data = new Uint8Array([...data, ...value])
@@ -158,6 +162,52 @@ export class WebtransportService {
       this.send('message', 'string');
       this.counter = i;
     }
+  }
+
+  public async startMultiClientTest(connections: number) {      
+      console.time("downloadFile");
+      this.max = connections;
+
+      for (let i = 0; i < connections; i++) {
+        this.multiClientTestAsync();
+      }
+  }
+
+  async multiClientTestAsync() {
+    let connection: any;
+        try {
+          connection = new WebTransport(this.url);
+          //console.log('Initiating connection...');
+        } catch (e) {
+          console.error('Failed to create connection object. ' + e, 'error');
+          return;
+        }
+    
+        try {
+          await connection.ready;
+          //console.log('Connection ready.');
+        } catch (e) {
+          console.error('Connection failed. ' + e, 'error');
+          return;
+        }
+    
+        connection.closed
+          .then(() => {
+            console.log('Connection closed normally.');
+          })
+          .catch(() => {
+            console.error('Connection closed abruptly.', 'error');
+          });
+
+        let encoder = new TextEncoder();
+        let data = encoder.encode('download-file'+'$'+"2_1MB.bin");
+        let stream = await this.transport.createBidirectionalStream();
+
+        this.readFromIncomingBinaryStream(stream);
+
+        let writer = stream.writable.getWriter();
+        await writer.write(data);
+        await writer.close();
   }
 
 

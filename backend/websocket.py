@@ -46,3 +46,7 @@ async def download_files_event(sid):
 @sio.on('download-file')
 async def download_file_event(sid, filename):
     await sio.emit('download-file', (filename, Data.get_file(filename)))
+
+@sio.on('multi-client-test')
+async def download_file_event(sid, filename):
+    await sio.emit('multi-client-test', (filename, Data.get_file(filename)), room=sid)
